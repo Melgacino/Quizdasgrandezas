@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz de Matemática Ribeirinha</title>
+  <style>
+    /* Estilos Gerais */
+    :root {
+      --cor-rio: #3498db;
+      --cor-barco: #2980b9;
+      --cor-vegetacao: #27ae60;
+      --cor-texto: #2c3e50;
+      --cor-fundo: #f5f7fa;
+      --cor-borda: #d1d8e0;
+      --cor-destaque: #e74c3c;
+      --cor-sucesso: #2ecc71;
+      --sombra: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--cor-fundo);
+      color: var(--cor-texto);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      background-image: linear-gradient(rgba(245, 247, 250, 0.9), rgba(245, 247, 250, 0.9)), 
+                        url('https://img.freepik.com/vetores-gratis/fundo-de-ondas-de-agua-estilo-desenhado-a-mao_23-2149051304.jpg');
+      background-size: cover;
+      background-attachment: fixed;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* Cards */
+    .card {
+      background-color: white;
+      border-radius: 15px;
+      padding: 40px;
+      box-shadow: var(--sombra);
+      text-align: center;
+      transition: transform 0.3s ease;
+      border: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 8px;
+      background: linear-gradient(90deg, var(--cor-rio), var(--cor-vegetacao));
+    }
+
+    /* Títulos e Textos */
+    h1, h2 {
+      color: var(--cor-barco);
+      margin-bottom: 25px;
+      font-weight: 700;
+      font-size: 28px;
+    }
+
+    p {
+      margin-bottom: 30px;
+      line-height: 1.6;
+      font-size: 18px;
+      color: var(--cor-texto);
+    }
+
+    /* Botões */
+    button {
+      background-color: var(--cor-rio);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 50px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+      margin: 15px 5px;
+      box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+      min-width: 200px;
+    }
+
+    button:hover {
+      background-color: var(--cor-barco);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(41, 128, 185, 0.4);
+    }
+
+    /* Elementos do Quiz */
+    #pergunta {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 30px;
+      color: var(--cor-texto);
+      line-height: 1.4;
+    }
+
+    #opcoes {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    #opcoes label {
+      display: block;
+      padding: 18px;
+      background-color: white;
+      border: 2px solid var(--cor-borda);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+      font-size: 17px;
+    }
+
+    #opcoes label:hover {
+      border-color: var(--cor-rio);
+      background-color: rgba(52, 152, 219, 0.05);
+      transform: translateX(5px);
+    }
+
+    #opcoes input[type="radio"] {
+      display: none;
+    }
+
+    #opcoes input[type="radio"]:checked + label {
+      background-color: rgba(52, 152, 219, 0.1);
+      border-color: var(--cor-rio);
+      font-weight: 600;
+      color: var(--cor-barco);
+    }
+
+    #feedback {
+      margin: 25px 0;
+      padding: 18px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 18px;
+      display: none;
+      text-align: left;
+    }
+
+    .feedback-correto {
+      background-color: rgba(46, 204, 113, 0.15);
+      color: var(--cor-sucesso);
+      border: 2px solid var(--cor-sucesso);
+      display: block !important;
+    }
+
+    .feedback-incorreto {
+      background-color: rgba(231, 76, 60, 0.15);
+      color: var(--cor-destaque);
+      border: 2px solid var(--cor-destaque);
+      display: block !important;
+    }
+
+    #pontuacaoFinal {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--cor-barco);
+      margin: 25px 0;
+    }
+
+    #mensagemFinal {
+      font-size: 20px;
+      margin-bottom: 30px;
+      padding: 15px;
+      border-radius: 10px;
+      background-color: rgba(52, 152, 219, 0.1);
+    }
+
+    #tempo {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--cor-texto);
+      margin-bottom: 15px;
+    }
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+      .card {
+        padding: 30px 20px;
+      }
+      
+      h1, h2 {
+        font-size: 24px;
+      }
+      
+      #pergunta {
+        font-size: 20px;
+      }
+      
+      button {
+        padding: 12px 25px;
+        font-size: 16px;
+        min-width: 160px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 15px;
+      }
+      
+      .card {
+        padding: 25px 15px;
+      }
+      
+      h1, h2 {
+        font-size: 22px;
+        margin-bottom: 20px;
+      }
+      
+      p {
+        font-size: 16px;
+      }
+      
+      #pergunta {
+        font-size: 18px;
+      }
+      
+      #opcoes label {
+        padding: 15px;
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <!-- Tela Inicial -->
+    <div id="telaInicial" class="card">
+      <h1>Bem-vindo ao Quiz de Matemática Ribeirinha!</h1>
+      <p>Teste seus conhecimentos sobre grandezas diretamente e inversamente proporcionais com contexto ribeirinho!</p>
+      <button onclick="iniciarQuiz()">Iniciar Quiz</button>
+    </div>
+
+    <!-- Tela do Quiz -->
+    <div id="quiz" class="card" style="display: none;">
+      <div id="contador">Pergunta 1 de 20</div>
+      <div id="tempo">Tempo: 0s</div>
+      <div id="pergunta"></div>
+      <form id="opcoes"></form>
+      <button id="btnResponder" onclick="verificarResposta()">Responder</button>
+      <div id="feedback"></div>
+      <button id="btnProxima" onclick="proximaPergunta()" style="display: none;">Próxima Pergunta</button>
+    </div>
+
+    <!-- Tela Final -->
+    <div id="telaFinal" class="card" style="display: none;">
+      <h2>Você concluiu o quiz!</h2>
+      <p id="pontuacaoFinal"></p>
+      <p id="tempoFinal"></p>
+      <p id="mensagemFinal"></p>
+      <button onclick="reiniciarQuiz()">Refazer Quiz</button>
+    </div>
+
+  </div>
+
+  <script>
+    // Função para embaralhar array (Fisher-Yates)
+    function embaralharArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    // Perguntas do quiz (20 questões com dificuldade progressiva)
+    const perguntasBase = [
+      // Nível 1 - Fácil (questões 1-5)
+      {
+        pergunta: "Se um barco pesca 5 kg de peixe por hora, quantos kg pescará em 3 horas?",
+        opcoes: [
+          { texto: "8 kg", feedback: "Atenção! Se pesca 5 kg por hora, em 3 horas pescará 5 × 3 = 15 kg." },
+          { texto: "15 kg", feedback: "Correto! 5 kg/h × 3 h = 15 kg." },
+          { texto: "10 kg", feedback: "Quase! Lembre-se de multiplicar a quantidade por hora pelo número de horas." },
+          { texto: "20 kg", feedback: "Cuidado! Você multiplicou errado. É 5 × 3, não 5 × 4." }
+        ],
+        resposta: 1,
+        explicacao: "Questão de proporção direta. 5 kg/h × 3 h = 15 kg."
+      },
+      {
+        pergunta: "Verdadeiro ou Falso: Se um barco dobra sua velocidade, o tempo para percorrer a mesma distância será reduzido pela metade.",
+        opcoes: [
+          { texto: "Verdadeiro", feedback: "Correto! Velocidade e tempo são inversamente proporcionais." },
+          { texto: "Falso", feedback: "Incorreto. Quando a velocidade dobra, o tempo realmente cai pela metade." }
+        ],
+        resposta: 0,
+        explicacao: "Verdadeiro. Velocidade e tempo são grandezas inversamente proporcionais."
+      },
+      {
+        pergunta: "Quantas horas tem um dia?",
+        opcoes: [
+          { texto: "12 horas", feedback: "Errado! Um dia completo tem 24 horas." },
+          { texto: "24 horas", feedback: "Correto! Um dia tem 24 horas." },
+          { texto: "10 horas", feedback: "Não, um dia tem 24 horas." },
+          { texto: "36 horas", feedback: "Muito alto! Na Terra, um dia tem 24 horas." }
+        ],
+        resposta: 1,
+        explicacao: "Um dia completo tem 24 horas."
+      },
+      {
+        pergunta: "Verdadeiro ou Falso: A área de um retângulo se calcula multiplicando base por altura.",
+        opcoes: [
+          { texto: "Verdadeiro", feedback: "Exatamente! Área = base × altura." },
+          { texto: "Falso", feedback: "Incorreto. A área do retângulo é sim base × altura." }
+        ],
+        resposta: 0,
+        explicacao: "Verdadeiro. A fórmula da área do retângulo é A = base × altura."
+      },
+      {
+        pergunta: "Se uma canoa transporta 2 pessoas, quantas canoas são necessárias para 8 pessoas?",
+        opcoes: [
+          { texto: "2 canoas", feedback: "Não suficiente! 2 canoas levariam apenas 4 pessoas." },
+          { texto: "3 canoas", feedback: "Quase! 3 canoas levam 6 pessoas, ainda faltaria." },
+          { texto: "4 canoas", feedback: "Correto! 4 canoas × 2 pessoas = 8 pessoas." },
+          { texto: "5 canoas", feedback: "Funcionaria, mas não é o mínimo necessário." }
+        ],
+        resposta: 2,
+        explicacao: "8 pessoas ÷ 2 pessoas/canoa = 4 canoas."
+      },
+      // Nível 2 - Intermediário (questões 6-10)
+      {
+        pergunta: "Um barco leva 3 horas para percorrer 60 km. Quanto tempo levará para percorrer 100 km na mesma velocidade?",
+        opcoes: [
+          { texto: "4 horas", feedback: "Quase! Primeiro calcule a velocidade: 60 km/3 h = 20 km/h. Depois 100 km ÷ 20 km/h = 5 h." },
+          { texto: "5 horas", feedback: "Correto! Velocidade = 60 km/3 h = 20 km/h. Tempo = 100 km ÷ 20 km/h = 5 h." },
+          { texto: "6 horas", feedback: "Muito alto! A velocidade é 20 km/h, então 100 km levam 5 h." },
+          { texto: "3,5 horas", feedback: "Muito baixo! A distância quase dobrou, o tempo deve aumentar proporcionalmente." }
+        ],
+        resposta: 1,
+        explicacao: "Velocidade = 60 km ÷ 3 h = 20 km/h. Tempo = 100 km ÷ 20 km/h = 5 horas."
+      },
+      {
+        pergunta: "Verdadeiro ou Falso: Se triplicamos o número de pescadores, a quantidade de peixes pescados também triplica (considerando mesmo tempo e condições).",
+        opcoes: [
+          { texto: "Verdadeiro", feedback: "Correto! Em condições ideais, mais pescadores = mais peixes proporcionalmente." },
+          { texto: "Falso", feedback: "Na verdade é verdadeiro, pois é uma relação diretamente proporcional." }
+        ],
+        resposta: 0,
+        explicacao: "Verdadeiro. Em condições constantes, a quantidade de peixes é diretamente proporcional ao número de pescadores."
+      },
+      {
+        pergunta: "Se 2 barcos transportam 30 pessoas em 3 viagens, quantas pessoas 3 barcos transportarão em 5 viagens?",
+        opcoes: [
+          { texto: "45 pessoas", feedback: "Parcialmente correto para os barcos, mas esqueceu de considerar as viagens extras." },
+          { texto: "75 pessoas", feedback: "Correto! Capacidade por barco/viagem = 30/(2×3) = 5. Então 3 barcos × 5 viagens × 5 = 75." },
+          { texto: "60 pessoas", feedback: "Você considerou só os barcos ou só as viagens. Precisa considerar ambos." },
+          { texto: "90 pessoas", feedback: "Muito alto! Você multiplicou tudo, mas a capacidade por barco/viagem é fixa." }
+        ],
+        resposta: 1,
+        explicacao: "Capacidade por barco/viagem = 30 pessoas ÷ (2 barcos × 3 viagens) = 5. Então 3 barcos × 5 viagens × 5 = 75 pessoas."
+      },
+      {
+        pergunta: "Verdadeiro ou Falso: Se um rio tem correnteza de 2 km/h a favor, um barco que normalmente faz 10 km/h em águas paradas fará 12 km/h rio abaixo.",
+        opcoes: [
+          { texto: "Verdadeiro", feedback: "Correto! Velocidade resultante = velocidade do barco + correnteza = 10 + 2 = 12 km/h." },
+          { texto: "Falso", feedback: "Incorreto. As velocidades realmente se somam quando estão no mesmo sentido." }
+        ],
+        resposta: 0,
+        explicacao: "Verdadeiro. Velocidades no mesmo sentido se somam: 10 km/h (barco) + 2 km/h (correnteza) = 12 km/h."
+      },
+      {
+        pergunta: "Um pescador vendeu 3/5 de seu peixe por R$ 120. Quanto receberia se vendesse todo o peixe?",
+        opcoes: [
+          { texto: "R$ 150", feedback: "Quase! Se 3/5 = R$ 120, então 1/5 = R$ 40, e 5/5 = R$ 200." },
+          { texto: "R$ 200", feedback: "Correto! 3/5 = 120 → 1/5 = 40 → 5/5 = 200." },
+          { texto: "R$ 180", feedback: "Não é a proporção correta. 120 ÷ 3 = 40 por 1/5, então total = 5 × 40 = 200." },
+          { texto: "R$ 240", feedback: "Muito alto! Você multiplicou 120 × 2, mas a fração é 3/5, não 1/2." }
+        ],
+        resposta: 1,
+        explicacao: "Se 3 partes valem R$ 120, então 1 parte vale R$ 40 (120 ÷ 3). O total (5 partes) vale 5 × 40 = R$ 200."
+      },
+      // Nível 3 - Difícil (questões 11-15)
+      {
+        pergunta: "Um barco gasta 20% mais combustível por hora quando está contra a correnteza. Se normalmente gasta 5 litros/hora, quanto gastará em 3 horas contra a correnteza?",
+        opcoes: [
+          { texto: "15 litros", feedback: "Esqueceu o aumento de 20%. Normal seria 15 litros, mas com aumento: 5 × 1,2 × 3 = 18 litros." },
+          { texto: "16 litros", feedback: "Quase! O cálculo correto é: 5 × 1,2 = 6 litros/h × 3 h = 18 litros." },
+          { texto: "18 litros", feedback: "Correto! 5 × 1,2 = 6 litros/h × 3 h = 18 litros." },
+          { texto: "20 litros", feedback: "Muito alto! O aumento é de 20%, não de 100%." }
+        ],
+        resposta: 2,
+        explicacao: "Consumo com aumento: 5 × 1,2 = 6 litros/h. Em 3 horas: 6 × 3 = 18 litros."
+      },
+      {
+        pergunta: "Verdadeiro ou Falso: Se um barco reduz sua velocidade em 25%, o tempo para percorrer a mesma distância aumentará em 33,33%.",
+        opcoes: [
+          { texto: "Verdadeiro", feedback: "Correto! Se velocidade cai para 75%, tempo aumenta para 1/0,75 ≈ 1,3333 (33,33% mais)." },
+          { texto: "Falso", feedback: "Na verdade é verdadeiro. A relação inversa faz o tempo aumentar mais que a redução de velocidade." }
+        ],
+        resposta: 0,
+        explicacao: "Verdadeiro. Velocidade 75% → tempo 100/75 ≈ 133,33% (aumento de 33,33%)."
+      },
+      {
+        pergunta: "Três barcos juntos pescam 60 kg em 2 horas. Cinco barcos juntos pescariam quantos kg em 3 horas?",
+        opcoes: [
+          { texto: "120 kg", feedback: "Quase! Primeiro calcule por barco/hora: 60 ÷ (3×2) = 10 kg/barco/h. Depois 5 × 3 × 10 = 150 kg." },
+          { texto: "150 kg", feedback: "Correto! 60 ÷ (3×2) = 10 kg/barco/h → 5 × 3 × 10 = 150 kg." },
+          { texto: "180 kg", feedback: "Muito alto! Você multiplicou demais. A taxa é 10 kg por barco por hora." },
+          { texto: "100 kg", feedback: "Muito baixo! Você subestimou o aumento de barcos e horas." }
+        ],
+        resposta: 1,
+        explicacao: "Produtividade = 60 kg ÷ (3 barcos × 2 h) = 10 kg/barco/h. Então 5 barcos × 3 h × 10 = 150 kg."
+      },
+      {
+        pergunta: "Verdadeiro ou Falso: Se um barco aumenta sua velocidade em 50% e depois reduz 50%, ele volta à velocidade original.",
+        opcoes: [
+          { texto: "Verdadeiro", feedback: "Cuidado! Aumento de 50% seguido de redução de 50% resulta em 75% da original (1,5 × 0,5 = 0,75)." },
+          { texto: "Falso", feedback: "Correto! A ordem das operações importa. 1,5 × 0,5 = 0,75 (75% da original)." }
+        ],
+        resposta: 1,
+        explicacao: "Falso. Se aumenta 50% (×1,5) e depois reduz 50% (×0,5), resulta em 1,5 × 0,5 = 0,75 (75% da original)."
+      },
+      {
+        pergunta: "Um barco tem consumo de combustível de 2 litros/km contra a correnteza e 1,5 litros/km a favor. Se percorrer 10 km contra e 10 km a favor, quantos litros gastará?",
+        opcoes: [
+          { texto: "30 litros", feedback: "Quase! Contra: 10 × 2 = 20 litros. A favor: 10 × 1,5 = 15 litros. Total = 35 litros." },
+          { texto: "35 litros", feedback: "Correto! 10 × 2 + 10 × 1,5 = 20 + 15 = 35 litros." },
+          { texto: "40 litros", feedback: "Muito alto! Você usou 2 litros/km para tudo. A favor é mais econômico." },
+          { texto: "25 litros", feedback: "Muito baixo! Você subestimou o consumo contra a correnteza." }
+        ],
+        resposta: 1,
+        explicacao: "Contra: 10 km × 2 l/km = 20 l. A favor: 10 × 1,5 = 15 l. Total = 20 + 15 = 35 litros."
+      },
+      // Nível 4 - Desafio (questões 16-20)
+      {
+        pergunta: "Um barco faz 20 km em 1h com motor a 100% e 15 km em 1h com motor a 75%. Quantos km fará em 1h com motor a 60%?",
+        opcoes: [
+          { texto: "10 km", feedback: "Muito baixo! A relação não é linear. 100% → 20 km, 75% → 15 km (75% de velocidade = 75% de distância). 60% seria 12 km." },
+          { texto: "12 km", feedback: "Correto! Se 100% → 20 km e 75% → 15 km, então 60% → 12 km (proporção direta)." },
+          { texto: "14 km", feedback: "Quase! Observe que 75% de potência dá 75% de distância (15/20 = 0,75)." },
+          { texto: "16 km", feedback: "Muito alto! 60% de potência não pode resultar em mais que 75% (15 km)." }
+        ],
+        resposta: 1,
+        explicacao: "Relação direta: 100% → 20 km, 75% → 15 km (15/20 = 0,75). Então 60% → 20 × 0,6 = 12 km."
+      },
+      {
+        pergunta: "Dois barcos partem simultaneamente de margens opostas de um rio de 60 km de largura. Um a 10 km/h (contra a correnteza) e outro a 14 km/h (a favor). Quando se encontrarão?",
+        opcoes: [
+          { texto: "2 horas", feedback: "Quase! Velocidade relativa = 10 + 14 = 24 km/h. Tempo = 60 km ÷ 24 km/h = 2,5 h." },
+          { texto: "2,5 horas", feedback: "Correto! Velocidade relativa = 10 + 14 = 24 km/h. Tempo = 60 km ÷ 24 km/h = 2,5 h." },
+          { texto: "3 horas", feedback: "Quase! Some as velocidades (10+14=24) e divida a distância (60÷24=2,5)." },
+          { texto: "4 horas", feedback: "Muito alto! Eles estão se aproximando, então o tempo deve ser menor." }
+        ],
+        resposta: 1,
+        explicacao: "Velocidade relativa = 10 + 14 = 24 km/h. Tempo = distância ÷ velocidade = 60 ÷ 24 = 2,5 horas."
+      },
+      {
+        pergunta: "Um barco faz uma viagem de ida e volta. Na ida (contra a correnteza) gasta 4 horas. Na volta (a favor) gasta 2 horas. Se a distância total é 60 km, qual a velocidade da correnteza?",
+        opcoes: [
+          { texto: "5 km/h", feedback: "Quase! Sistema: v - c = 15 (60/4), v + c = 30 (60/2). Resolvendo: 2v = 45 → v = 22,5; c = 7,5." },
+          { texto: "7,5 km/h", feedback: "Correto! v - c = 15, v + c = 30. Subtraindo: 2c = 15 → c = 7,5 km/h." },
+          { texto: "10 km/h", feedback: "Quase! Monte as equações: v - c = 15, v + c = 30. Resolva para c." },
+          { texto: "12 km/h", feedback: "Muito alto! A diferença entre ida e volta sugere correnteza menor." }
+        ],
+        resposta: 1,
+        explicacao: "v - c = 15 (60/4), v + c = 30 (60/2). Subtraindo: 2c = 15 → c = 7,5 km/h."
+      }
+    ];
+
+    // Variáveis do quiz
+    let perguntas = [];
+    let perguntaAtual = 0;
+    let pontuacao = 0;
+    let respostaSelecionada = null;
+    let tempoInicio = 0;
+    let tempoDecorrido = 0;
+    let cronometro;
+
+    // Inicializar quiz embaralhando perguntas e opções
+    function inicializarQuiz() {
+      // Embaralhar a ordem das perguntas
+      perguntas = embaralharArray([...perguntasBase]);
+      
+      // Embaralhar as opções de cada pergunta (mantendo o índice da resposta correta)
+      perguntas.forEach(pergunta => {
+        const opcoesOriginais = [...pergunta.opcoes];
+        const respostaCorreta = opcoesOriginais[pergunta.resposta];
+        
+        // Embaralhar opções
+        const opcoesEmbaralhadas = embaralharArray(opcoesOriginais);
+        
+        // Atualizar índice da resposta correta
+        pergunta.resposta = opcoesEmbaralhadas.findIndex(op => op.texto === respostaCorreta.texto);
+        pergunta.opcoes = opcoesEmbaralhadas;
+      });
+    }
+
+    // Função para atualizar o cronômetro
+    function atualizarCronometro() {
+      const agora = Date.now();
+      tempoDecorrido = Math.floor((agora - tempoInicio) / 1000);
+      document.getElementById('tempo').textContent = `Tempo: ${tempoDecorrido}s`;
+    }
+
+    // Funções do quiz
+    function iniciarQuiz() {
+      inicializarQuiz();
+      tempoInicio = Date.now();
+      cronometro = setInterval(atualizarCronometro, 1000);
+      document.getElementById('telaInicial').style.display = 'none';
+      document.getElementById('quiz').style.display = 'block';
+      mostrarPergunta();
+    }
+
+    function mostrarPergunta() {
+      const perguntaElement = document.getElementById('pergunta');
+      const opcoesElement = document.getElementById('opcoes');
+      const feedbackElement = document.getElementById('feedback');
+      const contadorElement = document.getElementById('contador');
+      
+      // Atualizar contador
+      contadorElement.textContent = `Pergunta ${perguntaAtual + 1} de ${perguntas.length}`;
+      
+      // Resetar elementos
+      feedbackElement.style.display = 'none';
+      feedbackElement.innerHTML = '';
+      feedbackElement.className = '';
+      
+      perguntaElement.textContent = perguntas[perguntaAtual].pergunta;
+      opcoesElement.innerHTML = '';
+      
+      perguntas[perguntaAtual].opcoes.forEach((opcao, index) => {
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = 'opcao';
+        radio.value = index;
+        radio.id = 'opcao' + index;
+        
+        const label = document.createElement('label');
+        label.htmlFor = 'opcao' + index;
+        label.textContent = opcao.texto;
+        
+        const div = document.createElement('div');
+        div.appendChild(radio);
+        div.appendChild(label);
+        
+        opcoesElement.appendChild(div);
+        
+        radio.addEventListener('change', function() {
+          respostaSelecionada = index;
+        });
+      });
+      
+      document.getElementById('btnResponder').style.display = 'inline-block';
+      document.getElementById('btnProxima').style.display = 'none';
+      respostaSelecionada = null;
+    }
+
+    function verificarResposta() {
+      if (respostaSelecionada === null) {
+        alert('Por favor, selecione uma opção!');
+        return;
+      }
+      
+      const feedbackElement = document.getElementById('feedback');
+      const pergunta = perguntas[perguntaAtual];
+      
+      if (respostaSelecionada === pergunta.resposta) {
+        feedbackElement.innerHTML = `
+          <div style="margin-bottom: 10px;"><strong>✅ Correto!</strong> ${pergunta.opcoes[respostaSelecionada].feedback}</div>
+          <div><strong>📚 Explicação completa:</strong> ${pergunta.explicacao}</div>
+        `;
+        feedbackElement.className = 'feedback-correto';
+        pontuacao++;
+      } else {
+        feedbackElement.innerHTML = `
+          <div style="margin-bottom: 10px;"><strong>❌ Incorreto.</strong> ${pergunta.opcoes[respostaSelecionada].feedback}</div>
+          <div><strong>📚 Explicação completa:</strong> ${pergunta.explicacao}</div>
+        `;
+        feedbackElement.className = 'feedback-incorreto';
+      }
+      
+      document.getElementById('btnResponder').style.display = 'none';
+      document.getElementById('btnProxima').style.display = 'inline-block';
+      feedbackElement.style.display = 'block';
+    }
+
+    function proximaPergunta() {
+      perguntaAtual++;
+      if (perguntaAtual < perguntas.length) {
+        mostrarPergunta();
+      } else {
+        finalizarQuiz();
+      }
+    }
+
+    function finalizarQuiz() {
+      clearInterval(cronometro);
+      document.getElementById('quiz').style.display = 'none';
+      document.getElementById('telaFinal').style.display = 'block';
+      
+      const porcentagem = Math.round((pontuacao / perguntas.length) * 100);
+      document.getElementById('pontuacaoFinal').textContent = `Você acertou ${pontuacao} de ${perguntas.length} perguntas (${porcentagem}%)!`;
+      document.getElementById('tempoFinal').textContent = `Tempo total: ${tempoDecorrido} segundos`;
+      
+      const mensagemFinal = document.getElementById('mensagemFinal');
+      if (porcentagem >= 90) {
+        mensagemFinal.textContent = "Excelente! Você demonstrou domínio total do conteúdo ribeirinho!";
+      } else if (porcentagem >= 70) {
+        mensagemFinal.textContent = "Muito bom! Você tem um bom conhecimento das matemáticas ribeirinhas!";
+      } else if (porcentagem >= 50) {
+        mensagemFinal.textContent = "Bom trabalho! Você está no caminho certo, pode melhorar ainda mais!";
+      } else {
+        mensagemFinal.textContent = "Continue praticando! A pescaria de conhecimento sempre traz bons frutos!";
+      }
+    }
+
+    function reiniciarQuiz() {
+      perguntaAtual = 0;
+      pontuacao = 0;
+      tempoDecorrido = 0;
+      inicializarQuiz();
+      document.getElementById('telaFinal').style.display = 'none';
+      document.getElementById('telaInicial').style.display = 'block';
+    }
+  </script>
+</body>
+</html>

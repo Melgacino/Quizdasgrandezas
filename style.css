@@ -1,0 +1,177 @@
+/* Estilos Gerais */
+:root {
+  --cor-rio: #3498db;
+  --cor-barco: #2980b9;
+  --cor-vegetacao: #27ae60;
+  --cor-texto: #2c3e50;
+  --cor-fundo: #ecf0f1;
+  --cor-borda: #bdc3c7;
+  --cor-destaque: #e74c3c;
+  --cor-sucesso: #2ecc71;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--cor-fundo);
+  color: var(--cor-texto);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  padding: 20px;
+  background-image: url('https://img.freepik.com/fotos-gratis/fundo-de-textura-de-papel-velho-amassado_1194-6285.jpg');
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+.container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Cards */
+.card {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.3s ease;
+  border: 1px solid var(--cor-borda);
+  position: relative;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  background: linear-gradient(90deg, var(--cor-rio), var(--cor-vegetacao));
+}
+
+/* Títulos e Textos */
+h1, h2 {
+  color: var(--cor-barco);
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+p {
+  margin-bottom: 25px;
+  line-height: 1.6;
+}
+
+/* Botões */
+button {
+  background-color: var(--cor-rio);
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 50px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  margin: 10px 5px;
+  box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+}
+
+button:hover {
+  background-color: var(--cor-barco);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(41, 128, 185, 0.4);
+}
+
+/* Elementos do Quiz */
+#pergunta {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 25px;
+  color: var(--cor-texto);
+}
+
+#opcoes {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+#opcoes label {
+  display: block;
+  padding: 15px;
+  background-color: white;
+  border: 2px solid var(--cor-borda);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+#opcoes label:hover {
+  border-color: var(--cor-rio);
+  background-color: rgba(52, 152, 219, 0.1);
+}
+
+#opcoes input[type="radio"]:checked + label {
+  background-color: rgba(52, 152, 219, 0.2);
+  border-color: var(--cor-rio);
+  font-weight: 600;
+}
+
+#feedback {
+  margin: 20px 0;
+  padding: 15px;
+  border-radius: 10px;
+  font-weight: 600;
+  display: none;
+}
+
+.feedback-correto {
+  background-color: rgba(46, 204, 113, 0.2);
+  color: var(--cor-sucesso);
+  display: block !important;
+}
+
+.feedback-incorreto {
+  background-color: rgba(231, 76, 60, 0.2);
+  color: var(--cor-destaque);
+  display: block !important;
+}
+
+#boneco {
+  margin: 20px auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#pontuacaoFinal {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--cor-barco);
+  margin: 20px 0;
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+  .card {
+    padding: 20px;
+  }
+  
+  h1 {
+    font-size: 24px;
+  }
+  
+  #pergunta {
+    font-size: 18px;
+  }
+}
